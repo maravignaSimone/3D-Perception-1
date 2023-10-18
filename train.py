@@ -20,8 +20,8 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # dataset and dataloader
 # ------------------------------------------
 
-""" train_dataset = 1
-val_dataset = 1
+""" train_dataset = 
+val_dataset = 
 train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=1) """
 
@@ -29,5 +29,15 @@ val_loader = DataLoader(val_dataset, batch_size=1) """
 # model
 # ------------------------------------------
 
-model = torchvision.models.detection.fasterrcnn_resnet50_fpn(weights=FasterRCNN_ResNet50_FPN_Weights.DEFAULT).to(device)
-print(model)
+model = torchvision.models.detection.fasterrcnn_resnet50_fpn(weights=FasterRCNN_ResNet50_FPN_Weights.DEFAULT)
+
+num_classes = 2
+
+in_features = model.roi_heads.box_predictor.cls_score.in_features
+model.roi_heads.box_predictor = torchvision.models.detection.faster_rcnn.FastRCNNPredictor(in_features, num_classes)
+
+model.to(device)
+
+#-------------------------------------------
+# loss function and optimizer
+# ------------------------------------------
