@@ -17,6 +17,7 @@ from loader import NuImagesDataset
 #-------------------------------------------
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+epochs = 10
 
 #-------------------------------------------
 # dataset and dataloader
@@ -41,5 +42,34 @@ model.roi_heads.box_predictor = torchvision.models.detection.faster_rcnn.FastRCN
 model.to(device)
 
 #-------------------------------------------
-# loss function and optimizer
+# loss function, optimizer and metric
 # ------------------------------------------
+
+criterion = torch.nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+
+
+#-------------------------------------------
+# training
+# ------------------------------------------
+
+print('Start training...')
+
+train_losses = []
+train_accuracy = []
+val_losses = []
+val_accuracy = []
+
+for epoch in range(epochs):
+    trainloss = 0
+    valloss = 0
+    trainaccuracy = 0
+    valaccuracy = 0
+
+    model.train()
+    for i, data in enumerate(train_loader):
+        input, target = data
+        print(target)
+        if(i>0):
+            break
