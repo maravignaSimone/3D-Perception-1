@@ -3,7 +3,7 @@ from torch.utils.data import DataLoader
 from torch.utils.data import Dataset
 from torchvision.io import read_image, ImageReadMode
 import glob
-import torch 
+import torch
 import PIL
 
 id_dict = {}
@@ -11,8 +11,8 @@ filenames = []
 front_tokens = []
 #creating dictionary of classes
 #eg, id_dict['animal']=1, id_dict['human.pedestrian.adult']=1, etc 0 is background
-for i, line in enumerate(open('data/sets/nuimages/classes.txt', 'r')):
-  id_dict[line.replace('\n', '')] = i+1 #creating matches class->number
+for i, line in enumerate(open('classes.txt', 'r')):
+    id_dict[line.replace('\n', '')] = i+1 #creating matches class->number
 nuim = NuImages(dataroot='data/sets/nuimages', version='v1.0-mini', verbose=True, lazy=True)
 for i, sample in  enumerate(nuim.sample): #itero la tabella sample
     """  if(i>0):
@@ -82,6 +82,3 @@ class NuImagesDataset(Dataset):
     def __len__(self):
         return len(front_tokens)
     
-dataset = NuImagesDataset('data/sets/nuimages', None)
-dataloader = DataLoader(dataset, batch_size=1, shuffle=True, num_workers=0)
-print(len(dataloader))
