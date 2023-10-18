@@ -30,7 +30,7 @@ for i, sample in  enumerate(nuim.sample): #itero la tabella sample
             front_tokens.append(token) #qui ho i tokens di sample_data delle imamgini che mi servono
 
 class NuImagesDataset(Dataset):
-    def __init__(self, root, transforms):
+    def __init__(self, root, transforms = None):
         self.root = root
         self.transforms = transforms
 
