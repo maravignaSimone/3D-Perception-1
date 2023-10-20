@@ -75,8 +75,6 @@ for epoch in range(epochs):
         images, targets = data
 
         images = list(image for image in images)
-        targets = [{k: v for k, v in t.items()} for t in targets]
-
         optimizer.zero_grad()
 
         output = model(images, targets)
