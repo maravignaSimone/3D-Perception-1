@@ -10,7 +10,7 @@ import torchvision
 from torchvision.models.detection import FasterRCNN_ResNet50_FPN_Weights
 from torch.utils.data import DataLoader
 from torchmetrics.detection.mean_ap import MeanAveragePrecision
-
+from torchvision.models.detection.rpn import AnchorGenerator
 from loader import NuImagesDataset
 
 #-------------------------------------------
@@ -24,8 +24,8 @@ epochs = 10
 # dataset and dataloader
 # ------------------------------------------
 
-train_dataset = NuImagesDataset('data/sets/nuimages')
-val_dataset = NuImagesDataset('data/sets/nuimages')
+train_dataset = NuImagesDataset('C:/Users/franc/3DProject1/data/sets/nuimages')
+val_dataset = NuImagesDataset('C:/Users/franc/3DProject1/data/sets/nuimages')
 train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=1)
 
@@ -76,14 +76,21 @@ for epoch in range(epochs):
 
         images = list(image for image in images)
         optimizer.zero_grad()
-
-        output = model(images, targets)
-        loss = criterion(output, targets)
+        target = []
+        target.append(targets)
+        target[0]['boxes']= target[0]['boxes'].squeeze(0)
+        print(target[0]['boxes'].shape )
+        print(target)
+        images = [(image / 255.0) for image in images] # transform images to [0,1] range
+        images = torch.stack(images).to(device)
+        target[0]['boxes'].to(device)
+        output = model(images, target)
+        loss = criterion(output, target)
         loss.backward()
         optimizer.step()
 
         trainloss += loss.item()
-        trainaccuracy += mAP(output, targets)
+        trainaccuracy += mAP(output, target)
 
     print('Epoch: {} - Finished training, starting eval'.format(epoch))
     train_losses.append(trainloss/len(train_loader))

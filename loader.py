@@ -13,7 +13,7 @@ front_tokens = []
 #eg, id_dict['animal']=1, id_dict['human.pedestrian.adult']=1, etc 0 is background
 for i, line in enumerate(open('classes.txt', 'r')):
     id_dict[line.replace('\n', '')] = i+1 #creating matches class->number
-nuim = NuImages(dataroot='data/sets/nuimages', version='v1.0-mini', verbose=True, lazy=True)
+nuim = NuImages(dataroot='C:/Users/franc/3DProject1/data/sets/nuimages', version='v1.0-mini', verbose=True, lazy=True)
 for i, sample in  enumerate(nuim.sample): #itero la tabella sample
     """  if(i>0):
         break """
