@@ -8,10 +8,9 @@
 import torch
 import torchvision
 from torchvision.models.detection import FasterRCNN_ResNet50_FPN_Weights
-import torch.utils.data
 from torch.utils.data import DataLoader
 from torchmetrics.detection.mean_ap import MeanAveragePrecision
-from loader import NuImagesDataset
+from loader import NuImagesDataset, collate_fn
 
 #-------------------------------------------
 # hyperparameters
@@ -25,12 +24,12 @@ epochs = 3
 # ------------------------------------------
 id_dict = {}
 #eg, id_dict['animal']=1, id_dict['human.pedestrian.adult']=2, etc 0 is background
-for i, line in enumerate(open('/hpc/home/simone.maravigna/3D-Perception-1/classes.txt', 'r')):
+for i, line in enumerate(open('./classes.txt', 'r')):
     id_dict[line.replace('\n', '')] = i+1 #creating matches class->number
-train_dataset = NuImagesDataset('/hpc/home/simone.maravigna/3D-Perception-1/data/sets/nuimages', id_dict=id_dict, version='train')
-val_dataset = NuImagesDataset('/hpc/home/simone.maravigna/3D-Perception-1/data/sets/nuimages', id_dict=id_dict, version='val')
-train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True, collate_fn=torch.utils.data.default_collate)
-val_loader = DataLoader(val_dataset, batch_size=1, collate_fn=torch.utils.data.default_collate)
+train_dataset = NuImagesDataset('./data/sets/nuimages', id_dict=id_dict, version='mini')
+val_dataset = NuImagesDataset('./data/sets/nuimages', id_dict=id_dict, version='mini')
+train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True, collate_fn=collate_fn)
+val_loader = DataLoader(val_dataset, batch_size=1, collate_fn=collate_fn)
 
 #-------------------------------------------
 # model
@@ -95,7 +94,7 @@ for epoch in range(epochs):
 
         print(losses)
 
-        #trainloss += loss.item()
+        trainloss += losses.item()
         #trainaccuracy += mAP(output, targets)
 
     print('Epoch: {} - Finished training, starting eval'.format(epoch))
