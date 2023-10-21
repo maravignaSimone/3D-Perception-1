@@ -10,7 +10,7 @@ class NuImagesDataset(Dataset):
         self.filenames = []
         self.front_tokens = []
         self.id_dict = id_dict
-        self.nuim = NuImages(dataroot=root, version='v1.0-'+version, verbose=True, lazy=True)
+        self.nuim = NuImages(dataroot=root, version='v1.0-'+version, verbose=False, lazy=True)
         #now we need to build the lists of filenames and tokens
         for i, sample in  enumerate(self.nuim.sample):
             sample_token = sample['token'] #this is the token of the sample we are analyzing
@@ -49,10 +49,6 @@ class NuImagesDataset(Dataset):
             })
         
         
-        
-        # Wrap sample and targets into torchvision tv_tensors:
-        #img = torch.Tensor(img)
-
         # put boxes and labels into tensors
         boxes = torch.Tensor([d['bbox'] for d in data])
         labels = torch.as_tensor([d['category_id'] for d in data], dtype=torch.int64)
