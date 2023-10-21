@@ -26,7 +26,7 @@ epochs = 10
 
 train_dataset = NuImagesDataset('./data/sets/nuimages')
 val_dataset = NuImagesDataset('./data/sets/nuimages')
-train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)
+train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=1)
 
 #-------------------------------------------
@@ -70,8 +70,8 @@ for epoch in range(epochs):
 
     model.train()
     for i, data in enumerate(train_loader):
-        if(i>0):
-            break
+        """ if(i>0):
+            break """
         images, boxes, labels = data
 
         images = list((image/255.0) for image in images)
@@ -82,18 +82,18 @@ for epoch in range(epochs):
             d['boxes'] = boxes[i]
             d['labels'] = labels[i]
             targets.append(d)
-        print(targets)
 
         optimizer.zero_grad()
 
-        output = model(images, targets)
-        print(output)
-        loss = criterion(output, targets)
-        loss.backward()
+        loss_dict = model(images, targets)
+        losses = sum(loss for loss in loss_dict.values())
+        losses.backward()
         optimizer.step()
 
-        trainloss += loss.item()
-        trainaccuracy += mAP(output, targets)
+        print(losses)
+
+        #trainloss += loss.item()
+        #trainaccuracy += mAP(output, targets)
 
     print('Epoch: {} - Finished training, starting eval'.format(epoch))
     train_losses.append(trainloss/len(train_loader))
@@ -102,18 +102,18 @@ for epoch in range(epochs):
     model.eval()
     with torch.no_grad():
         for i, data in enumerate(val_loader):
-            if(i>0):
-                break
-            images, targets = data
+            """ if(i>0):
+                break """
+            images, boxes, label = data
 
             images = list(image for image in images)
             targets = {k: v.to(device) for k, v in targets.items()}
 
-            output = model(images, targets)
+            output = model(images)
             loss = criterion(output, targets)
 
-            valloss += loss.item()
-            valaccuracy += mAP(output, targets)
+            #valloss += loss.item()
+            #valaccuracy += mAP(output, targets)
         
         val_losses.append(valloss/len(val_loader))
         val_accuracy.append(valaccuracy/len(val_loader))
