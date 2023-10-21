@@ -60,20 +60,16 @@ mAP = MeanAveragePrecision().to(device)
 print('Start training...')
 
 train_losses = []
-train_accuracy = []
-val_losses = []
 val_accuracy = []
 
 for epoch in range(epochs):
     trainloss = 0
-    valloss = 0
-    trainaccuracy = 0
     valaccuracy = 0
 
     model.train()
     for i, data in enumerate(train_loader):
-        """ if(i>0):
-            break """
+        if(i>0):
+            break
         images, boxes, labels = data
 
         images = list((image/255.0).to(device) for image in images)
@@ -95,39 +91,35 @@ for epoch in range(epochs):
         print(losses)
 
         trainloss += losses.item()
-        #trainaccuracy += mAP(output, targets)
 
     print('Epoch: {} - Finished training, starting eval'.format(epoch))
     train_losses.append(trainloss/len(train_loader))
-    train_accuracy.append(trainaccuracy/len(train_loader))
 
     model.eval()
     with torch.no_grad():
         for i, data in enumerate(val_loader):
             """ if(i>0):
                 break """
-            images, boxes, label = data
+            images, boxes, labels = data
 
             images = list((image/255.0).to(device) for image in images)
 
-            """ targets = []
+            targets = []
             for i in range(len(images)):
                 d = {}
-                d['boxes'] = boxes[i]
-                d['labels'] = labels[i]
-                targets.append(d) """
+                d['boxes'] = boxes[i].to(device)
+                d['labels'] = labels[i].to(device)
+                targets.append(d)
 
             output = model(images)
             print(output)
-            #loss = criterion(output, targets)
 
-            #valloss += loss.item()
-            #valaccuracy += mAP(output, targets)
+            mean_ap = mAP.forward(output, targets)
+            valaccuracy += mean_ap['map'].item()
         
-        val_losses.append(valloss/len(val_loader))
         val_accuracy.append(valaccuracy/len(val_loader))
 
     print('Epoch: {} - Finished eval'.format(epoch))
-    print('Train loss: {} - Train accuracy: {}'.format(train_losses[-1], train_accuracy[-1]))
-    print('Val loss: {} - Val accuracy: {}'.format(val_losses[-1], val_accuracy[-1]))
+    print('Train loss: {}'.format(train_losses[-1]))
+    print('Val accuracy: {}'.format(val_accuracy[-1]))
 
