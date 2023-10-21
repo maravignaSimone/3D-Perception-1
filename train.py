@@ -24,10 +24,10 @@ epochs = 3
 # ------------------------------------------
 id_dict = {}
 #eg, id_dict['animal']=1, id_dict['human.pedestrian.adult']=2, etc 0 is background
-for i, line in enumerate(open('./classes.txt', 'r')):
+for i, line in enumerate(open('/hpc/home/simone.maravigna/classes.txt', 'r')):
     id_dict[line.replace('\n', '')] = i+1 #creating matches class->number
-train_dataset = NuImagesDataset('./data/sets/nuimages', id_dict=id_dict, version='mini')
-val_dataset = NuImagesDataset('./data/sets/nuimages', id_dict=id_dict, version='mini')
+train_dataset = NuImagesDataset('/hpc/home/simone.maravigna/data/sets/nuimages', id_dict=id_dict, version='train')
+val_dataset = NuImagesDataset('/hpc/home/simone.maravigna/data/sets/nuimages', id_dict=id_dict, version='val')
 train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True, collate_fn=collate_fn)
 val_loader = DataLoader(val_dataset, batch_size=1, collate_fn=collate_fn)
 
@@ -67,8 +67,8 @@ for epoch in range(epochs):
 
     model.train()
     for i, data in enumerate(train_loader):
-        if(i>0):
-            break
+        """ if(i>0):
+            break """
         images, boxes, labels = data
 
         images = list((image/255.0).to(device) for image in images)
