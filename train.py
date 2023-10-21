@@ -17,7 +17,7 @@ from loader import NuImagesDataset, collate_fn
 #-------------------------------------------
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-epochs = 3
+epochs = 5
 
 #-------------------------------------------
 # dataset and dataloader
