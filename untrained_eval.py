@@ -9,9 +9,11 @@ import torch
 import torchvision
 from torchvision.models.detection import FasterRCNN_ResNet50_FPN_Weights
 from torch.utils.data import DataLoader
-from torchmetrics.detection.mean_ap import MeanAveragePrecision
-from torchvision.models.detection.rpn import AnchorGenerator
+
 from loader import NuImagesDataset
+from PIL import Image, ImageDraw, ImageFont
+import cv2
+
 
 #-------------------------------------------
 # hyperparameters
@@ -43,18 +45,25 @@ model.to(device)
 model.eval()
 with torch.no_grad():
     for i, data in enumerate(val_loader):
-        """ if(i>0):
-            break """
         images, boxes, label = data
 
         images = list((image/255.0).to(device) for image in images)
+        outputs = model(images)
 
-        """ targets = []
-        for i in range(len(images)):
-            d = {}
-            d['boxes'] = boxes[i]
-            d['labels'] = labels[i]
-            targets.append(d) """
+        # Draw bounding boxes on the images
+        for j in range(len(outputs)):
+            print(outputs[j])
+            img = Image.fromarray(images[j].mul(255).permute(1, 2, 0).byte().cpu().numpy())
+            draw = ImageDraw.Draw(img)
+            font = ImageFont.truetype("arial.ttf", 25)
+            
+            for k in range(len(outputs[j]['boxes'])):
+                    box = outputs[j]['boxes'][k]
+                    label = outputs[j]['labels'][k]
+                    draw.rectangle(box.tolist(), outline='red')
+                    draw.text((box[0], box[1]), str(label.item()), font=font, fill='red', stroke_width=1)
+            img.show()
 
-        output = model(images)
-        print(output)
+                
+            
+#outputs[j]['boxes'], outputs[j]['labels']
