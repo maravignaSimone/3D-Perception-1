@@ -5,12 +5,12 @@ from torchvision.io import read_image, ImageReadMode
 
 #defining the dataset class
 class NuImagesDataset(Dataset):
-    def __init__(self, root, id_dict):
+    def __init__(self, root, id_dict, version='mini'):
         self.root = root
         self.filenames = []
         self.front_tokens = []
         self.id_dict = id_dict
-        self.nuim = NuImages(dataroot=root, version='v1.0-mini', verbose=True, lazy=True)
+        self.nuim = NuImages(dataroot=root, version='v1.0-'+version, verbose=True, lazy=True)
         #now we need to build the lists of filenames and tokens
         for i, sample in  enumerate(self.nuim.sample):
             sample_token = sample['token'] #this is the token of the sample we are analyzing
