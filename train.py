@@ -24,9 +24,9 @@ epochs = 10
 # dataset and dataloader
 # ------------------------------------------
 
-train_dataset = NuImagesDataset('C:/Users/franc/3DProject1/data/sets/nuimages')
-val_dataset = NuImagesDataset('C:/Users/franc/3DProject1/data/sets/nuimages')
-train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
+train_dataset = NuImagesDataset('./data/sets/nuimages')
+val_dataset = NuImagesDataset('./data/sets/nuimages')
+train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=1)
 
 #-------------------------------------------
@@ -35,7 +35,7 @@ val_loader = DataLoader(val_dataset, batch_size=1)
 
 model = torchvision.models.detection.fasterrcnn_resnet50_fpn(weights=FasterRCNN_ResNet50_FPN_Weights.DEFAULT)
 
-num_classes = 23 # 23 classes + background
+num_classes = 24 # 23 classes + background
 
 in_features = model.roi_heads.box_predictor.cls_score.in_features
 model.roi_heads.box_predictor = torchvision.models.detection.faster_rcnn.FastRCNNPredictor(in_features, num_classes)
@@ -72,25 +72,28 @@ for epoch in range(epochs):
     for i, data in enumerate(train_loader):
         if(i>0):
             break
-        images, targets = data
+        images, boxes, labels = data
 
-        images = list(image for image in images)
+        images = list((image/255.0) for image in images)
+
+        targets = []
+        for i in range(len(images)):
+            d = {}
+            d['boxes'] = boxes[i]
+            d['labels'] = labels[i]
+            targets.append(d)
+        print(targets)
+
         optimizer.zero_grad()
-        target = []
-        target.append(targets)
-        target[0]['boxes']= target[0]['boxes'].squeeze(0)
-        print(target[0]['boxes'].shape )
-        print(target)
-        images = [(image / 255.0) for image in images] # transform images to [0,1] range
-        images = torch.stack(images).to(device)
-        target[0]['boxes'].to(device)
-        output = model(images, target)
-        loss = criterion(output, target)
+
+        output = model(images, targets)
+        print(output)
+        loss = criterion(output, targets)
         loss.backward()
         optimizer.step()
 
         trainloss += loss.item()
-        trainaccuracy += mAP(output, target)
+        trainaccuracy += mAP(output, targets)
 
     print('Epoch: {} - Finished training, starting eval'.format(epoch))
     train_losses.append(trainloss/len(train_loader))

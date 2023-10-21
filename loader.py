@@ -13,7 +13,7 @@ front_tokens = []
 #eg, id_dict['animal']=1, id_dict['human.pedestrian.adult']=1, etc 0 is background
 for i, line in enumerate(open('classes.txt', 'r')):
     id_dict[line.replace('\n', '')] = i+1 #creating matches class->number
-nuim = NuImages(dataroot='C:/Users/franc/3DProject1/data/sets/nuimages', version='v1.0-mini', verbose=True, lazy=True)
+nuim = NuImages(dataroot='./data/sets/nuimages', version='v1.0-mini', verbose=True, lazy=True)
 for i, sample in  enumerate(nuim.sample): #itero la tabella sample
     """  if(i>0):
         break """
@@ -54,30 +54,20 @@ class NuImagesDataset(Dataset):
             'category_id': cl,
             'category_name': label
             })
-        # there is only one class
-        labels = torch.as_tensor([d['category_id'] for d in data], dtype=torch.int64)
-        image_id = idx
-        #each bounding box is in the format xyxy
-        #compute the area of each bounding box
-        area = torch.as_tensor([d['bbox'][2]*d['bbox'][3] for d in data], dtype=torch.float32) #probabilmente non funziona
-        # suppose all instances are not crowd
-        iscrowd = torch.zeros((len(data),), dtype=torch.int64)
+        
+        
         
         # Wrap sample and targets into torchvision tv_tensors:
         img = torch.Tensor(img)
 
-        target = {}
-        target["boxes"] = torch.Tensor([d['bbox'] for d in data])
-        area = torch.Tensor([d['bbox'][3]-d['bbox'][1] for d in data])*torch.Tensor([d['bbox'][2]-d['bbox'][0] for d in data])
-        target["labels"] = labels
-        target["image_id"] = image_id
-        target["area"] = area
-        target["iscrowd"] = iscrowd
+        boxes = torch.Tensor([d['bbox'] for d in data])
+        # there is only one class
+        labels = torch.as_tensor([d['category_id'] for d in data], dtype=torch.int64)
 
-        if self.transforms is not None:
-            img, target = self.transforms(img, target)
+        """ if self.transforms is not None:
+            img, target = self.transforms(img, target) """
 
-        return img, target
+        return img, boxes, labels
 
     def __len__(self):
         return len(front_tokens)
