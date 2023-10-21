@@ -3,6 +3,9 @@ from nuimages import NuImages
 from torch.utils.data import Dataset
 from torchvision.io import read_image, ImageReadMode
 
+def collate_fn(batch):
+    return tuple(zip(*batch))
+
 #defining the dataset class
 class NuImagesDataset(Dataset):
     def __init__(self, root, id_dict, version='mini'):
