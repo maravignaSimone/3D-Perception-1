@@ -45,10 +45,9 @@ model.roi_heads.box_predictor = torchvision.models.detection.faster_rcnn.FastRCN
 model.to(device)
 
 #-------------------------------------------
-# loss function, optimizer and metric
+# optimizer and metric
 # ------------------------------------------
 
-criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 mAP = MeanAveragePrecision().to(device)
