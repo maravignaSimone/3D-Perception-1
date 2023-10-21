@@ -8,6 +8,7 @@
 import torch
 import torchvision
 from torchvision.models.detection import FasterRCNN_ResNet50_FPN_Weights
+import torch.utils.data
 from torch.utils.data import DataLoader
 from torchmetrics.detection.mean_ap import MeanAveragePrecision
 from torchvision.models.detection.rpn import AnchorGenerator
@@ -29,8 +30,8 @@ for i, line in enumerate(open('./classes.txt', 'r')):
     id_dict[line.replace('\n', '')] = i+1 #creating matches class->number
 train_dataset = NuImagesDataset('./data/sets/nuimages', id_dict=id_dict)
 val_dataset = NuImagesDataset('./data/sets/nuimages', id_dict=id_dict)
-train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=1)
+train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True, collate_fn=torch.utils.data.default_collate)
+val_loader = DataLoader(val_dataset, batch_size=1, collate_fn=torch.utils.data.default_collate)
 
 #-------------------------------------------
 # model
