@@ -90,8 +90,6 @@ for epoch in range(epochs):
         losses.backward()
         optimizer.step()
 
-        print(losses)
-
         trainloss += losses.item()
 
     print('Epoch: {} - Finished training, starting eval'.format(epoch))
@@ -121,7 +119,6 @@ for epoch in range(epochs):
                 targets.append(d)
 
             output = model(images)
-            print(output)
 
             mean_ap = mAP.forward(output, targets)
             valaccuracy += mean_ap['map'].item()

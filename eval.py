@@ -39,7 +39,7 @@ model = torchvision.models.detection.fasterrcnn_resnet50_fpn(weights=FasterRCNN_
 
 model.to(device)
 
-model.load_state_dict(torch.load("/hpc/home/simone.maravigna/3D-Perception-1/checkpoints"))
+model.load_state_dict(torch.load("/hpc/home/simone.maravigna/3D-Perception-1/checkpoints/filename.pth"))
 
 mAP = MeanAveragePrecision().to(device)
 
@@ -66,7 +66,6 @@ with torch.no_grad():
             targets.append(d)
 
         output = model(images)
-        print(output)
 
         mean_ap = mAP.forward(output, targets)
         valaccuracy += mean_ap['map'].item()
