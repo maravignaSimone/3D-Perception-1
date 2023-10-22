@@ -1,3 +1,7 @@
+# Authors: Simone Maravigna, Francesco Marotta
+# Date: 2023-10
+# Project: 2D Object Detection on nuImages Dataset using Faster R-CNN
+
 import torch
 from nuimages import NuImages
 from torch.utils.data import Dataset

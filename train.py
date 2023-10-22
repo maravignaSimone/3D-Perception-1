@@ -19,7 +19,7 @@ import time
 #-------------------------------------------
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-epochs = 3
+epochs = 10
 
 #-------------------------------------------
 # dataset and dataloader
@@ -101,7 +101,7 @@ for epoch in range(epochs):
     print("Saving checkpoints")
     current_time = time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
     filename = f"checkpoint_epoch{epoch}_{current_time}.pth"
-    save_path = os.path.join("hpc/home/simone.maravigna/3D-Perception-1/checkpoints", filename)
+    save_path = os.path.join("/hpc/home/simone.maravigna/3D-Perception-1/checkpoints", filename)
     torch.save(model.state_dict(), save_path)
 
     model.eval()
