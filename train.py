@@ -19,7 +19,7 @@ import time
 #-------------------------------------------
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-epochs = 10
+epochs = 3
 
 #-------------------------------------------
 # dataset and dataloader
@@ -95,8 +95,8 @@ for epoch in range(epochs):
         trainloss += losses.item()
 
     print('Epoch: {} - Finished training, starting eval'.format(epoch))
-    print('Train loss: {}'.format(train_losses[-1]))
     train_losses.append(trainloss/len(train_loader))
+    print('Train loss: {}'.format(train_losses[-1]))
 
     print("Saving checkpoints")
     current_time = time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
