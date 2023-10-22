@@ -51,6 +51,12 @@ class NuImagesDataset(Dataset):
             'category_name': label
             })
         
+        if len(data) == 0:
+            data.append({
+            'bbox': [0,0,0.1,0.1],
+            'category_id': 0,
+            'category_name': 'void'
+            })
         
         # put boxes and labels into tensors
         boxes = torch.Tensor([d['bbox'] for d in data])
