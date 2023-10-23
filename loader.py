@@ -18,7 +18,7 @@ def get_id_dict():
         id_dict[line.replace('\n', '')] = i+1 #creating matches class->number
     return id_dict
 
-#get a dictionary number->class
+#get a dictionary number->class (reverse)
 def get_id_dict_rev():
     id_dict_rev = {}
     #eg, id_dict_rev[1]='animal', id_dict_rev[2]='human.pedestrian.adult', etc 0 is background

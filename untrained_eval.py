@@ -12,7 +12,6 @@ from torch.utils.data import DataLoader
 import os
 from loader import NuImagesDataset, collate_fn, get_id_dict
 from PIL import Image, ImageDraw, ImageFont
-import cv2
 
 
 #-------------------------------------------
