@@ -9,8 +9,8 @@ import torch
 import torchvision
 from torchvision.models.detection import FasterRCNN_ResNet50_FPN_Weights
 from torch.utils.data import DataLoader
-
-from loader import NuImagesDataset, collate_fn
+import os
+from loader import NuImagesDataset, collate_fn, get_id_dict
 from PIL import Image, ImageDraw, ImageFont
 import cv2
 
@@ -25,11 +25,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # dataset and dataloader
 # ------------------------------------------
 
-id_dict = {}
-#eg, id_dict['animal']=1, id_dict['human.pedestrian.adult']=2, etc 0 is background
-for i, line in enumerate(open('./classes.txt', 'r')):
-    id_dict[line.replace('\n', '')] = i+1 #creating matches class->number
-
+id_dict = get_id_dict()
 val_dataset = NuImagesDataset('./data/sets/nuimages', id_dict=id_dict)
 val_loader = DataLoader(val_dataset, batch_size=1, collate_fn=collate_fn)
 
@@ -62,10 +58,12 @@ with torch.no_grad():
             for k in range(len(outputs[j]['boxes'])):
                     box = outputs[j]['boxes'][k]
                     label = outputs[j]['labels'][k]
-                    draw.rectangle(box.tolist(), outline='red')
-                    draw.text((box[0], box[1]), str(label.item()), font=font, fill='red', stroke_width=1)
+                    score = outputs[j]['scores'][k]
+                    score = score.item()
+                    
+                    if(score>0.7):
+                        draw.rectangle(box.tolist(), outline='red', width=2)
+                        draw.text((box[0], box[1]), str(label.item()) + '//' + str(round(score,2)), font=font, fill='red', stroke_width=1)
             img.show()
-
-                
+            img.save(os.path.join('./output/untrained', 'img'+str(i)+'.jpg'))
             
-#outputs[j]['boxes'], outputs[j]['labels']

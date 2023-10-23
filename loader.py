@@ -10,6 +10,23 @@ from torchvision.io import read_image, ImageReadMode
 def collate_fn(batch):
     return tuple(zip(*batch))
 
+#get a dictionary class->number
+def get_id_dict():
+    id_dict = {}
+    #eg, id_dict['animal']=1, id_dict['human.pedestrian.adult']=2, etc 0 is background
+    for i, line in enumerate(open('classes.txt', 'r')):
+        id_dict[line.replace('\n', '')] = i+1 #creating matches class->number
+    return id_dict
+
+#get a dictionary number->class
+def get_id_dict_rev():
+    id_dict_rev = {}
+    #eg, id_dict_rev[1]='animal', id_dict_rev[2]='human.pedestrian.adult', etc 0 is background
+    for i, line in enumerate(open('classes.txt', 'r')):
+        id_dict_rev[i+1] = line.replace('\n', '') #creating matches number->class
+    return id_dict_rev
+
+
 #defining the dataset class
 class NuImagesDataset(Dataset):
     def __init__(self, root, id_dict, version='mini'):
