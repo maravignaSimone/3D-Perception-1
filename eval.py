@@ -74,17 +74,17 @@ with torch.no_grad():
             print(output[j])
             img = Image.fromarray(images[j].mul(255).permute(1, 2, 0).byte().cpu().numpy())
             draw = ImageDraw.Draw(img)
-            font = ImageFont.truetype("arial.ttf", 25)
+            font = ImageFont.truetype("arial.ttf", 20)
             
             for k in range(len(output[j]['boxes'])):
                     box = output[j]['boxes'][k]
                     label = output[j]['labels'][k]
                     score = output[j]['scores'][k]
                     score = score.item()
-                    
+                    label = id_dict_rev[label.item()].split('.')[-1]
                     if(score>0.7):
                         draw.rectangle(box.tolist(), outline='red', width=2)
-                        draw.text((box[0], box[1]),id_dict_rev[label.item()] , font=font, fill='red', stroke_width=1)
+                        draw.text((box[0], box[1]), label, font=font, fill='red', stroke_width=1)
             img.show()
             img.save(os.path.join('./output/eval', 'img'+str(i)+'.jpg'))
 print('Val accuracy: {}'.format(valaccuracy/len(val_loader)))
